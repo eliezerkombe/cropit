@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>cropit</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="../dist/jquery.cropit.js"></script>
+
+    <style>
+      .image-editor{width:500px;}
+      .cropit-image-preview-container{}
+      .cropit-image-preview {
+        background-color: #f8f8f8;
+        background-size: cover;
+        border: 5px solid #ccc;
+        border-radius: 100%;
+        margin-top: 7px;
+        width: 250px;
+        height: 250px;
+        cursor: move;
+      }
+
+      .cropit-image-background {
+        opacity: .2;
+        cursor: auto;
+      }
+
+      .image-size-label {
+        margin-top: 10px;
+      }
+
+      input {
+        /* Use relative position to prevent from being covered by image background */
+        position: relative;
+        z-index: 10;
+        display: block;
+      }
+
+      .export {
+        margin-top: 10px;
+      }
+	  .cropit-image-input{
+		 display:none;  
+	  }
+	  .upload{
+		  cursor:pointer;
+		  border:1px solid #a8c1d5; 
+		  -webkit-border-radius: 3px; 
+		  -moz-border-radius: 3px;
+		  border-radius: 3px;
+		  font-size:12px;
+		  font-family:arial, helvetica, sans-serif;
+		  padding: 10px 10px 10px 10px; 
+		  text-decoration:none; 
+		  display:inline-block;
+		  text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+		  font-weight:bold; 
+		  color: #FFFFFF;
+		  background-color: #CEDCE7; 
+		  background-image: -webkit-gradient(linear, left top, left bottom, from(#CEDCE7), to(#596a72));
+		  background-image: -webkit-linear-gradient(top, #CEDCE7, #596a72);
+		  background-image: -moz-linear-gradient(top, #CEDCE7, #596a72);
+		  background-image: -ms-linear-gradient(top, #CEDCE7, #596a72);
+		  background-image: -o-linear-gradient(top, #CEDCE7, #596a72);
+		  background-image: linear-gradient(to bottom, #CEDCE7, #596a72);
+		  filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#CEDCE7, endColorstr=#596a72);
+		  }
+	  .upload:hover{
+ 		  border:1px solid #8aabc5;
+		  background-color: #acc4d6; 
+		  background-image: -webkit-gradient(linear, left top, left bottom, from(#acc4d6), to(#434f55));
+		  background-image: -webkit-linear-gradient(top, #acc4d6, #434f55);
+		  background-image: -moz-linear-gradient(top, #acc4d6, #434f55);
+		  background-image: -ms-linear-gradient(top, #acc4d6, #434f55);
+		  background-image: -o-linear-gradient(top, #acc4d6, #434f55);
+		  background-image: linear-gradient(to bottom, #acc4d6, #434f55);
+		  filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#acc4d6, endColorstr=#434f55);
+		  }
+	  .export{
+		  cursor:pointer;
+		  border:1px solid #495267; 
+		 -webkit-border-radius: 3px; 
+		 -moz-border-radius: 3px;
+		 border-radius: 3px;
+		 font-size:12px;
+		 font-family:arial, helvetica, sans-serif; 
+		 padding: 10px 10px 10px 10px; 
+		 text-decoration:none; 
+		 display:inline-block;
+		 text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+		 font-weight:bold; 
+		 color: #FFFFFF;
+		 background-color: #606c88; 
+		 background-image: -webkit-gradient(linear, left top, left bottom, from(#606c88), to(#3f4c6b));
+		 background-image: -webkit-linear-gradient(top, #606c88, #3f4c6b);
+		 background-image: -moz-linear-gradient(top, #606c88, #3f4c6b);
+		 background-image: -ms-linear-gradient(top, #606c88, #3f4c6b);
+		 background-image: -o-linear-gradient(top, #606c88, #3f4c6b);
+		 background-image: linear-gradient(to bottom, #606c88, #3f4c6b);
+		 filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#606c88,
+		 endColorstr=#3f4c6b);
+		  }
+		  .export:hover{
+		  border:1px solid #363d4c;
+		  background-color: #4b546a; background-image: -webkit-gradient(linear, left top, left bottom, from(#4b546a), to(#2c354b));
+		  background-image: -webkit-linear-gradient(top, #4b546a, #2c354b);
+		  background-image: -moz-linear-gradient(top, #4b546a, #2c354b);
+		  background-image: -ms-linear-gradient(top, #4b546a, #2c354b);
+		  background-image: -o-linear-gradient(top, #4b546a, #2c354b);
+		  background-image: linear-gradient(to bottom, #4b546a, #2c354b);
+		  filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4b546a, endColorstr=#2c354b);
+		  } 	  
+    </style>
+  </head>
+  <body>
+    <div class="image-editor">
+      <!-- .cropit-image-preview-container is needed for background image to work -->
+      <div class="cropit-image-preview-container">
+        <div class="cropit-image-preview"></div>
+      </div>
+      <div class="image-size-label">
+        Resize image
+      </div>
+      <input type="range" class="cropit-image-zoom-input">
+      <button class="upload">Upload Image</button>
+      <input type="file" class="cropit-image-input">
+      <button class="export">Update</button>
+    </div>
+
+    <script>
+      $(function() {
+        $('.image-editor').cropit({
+          exportZoom: 1.25,
+          imageBackground: true,
+          imageBackgroundBorderWidth: 20,
+          imageState: {
+            //src: 'http://lorempixel.com/500/400/'
+            src: ''
+          }
+        });
+
+        $('.export').click(function() {
+          var imageData = $('.image-editor').cropit('export');
+          window.open(imageData);
+        });
+	    $('.upload').on('click',function(){
+		  	$('.cropit-image-input').click();
+		  });
+
+      });
+    </script>
+  </body>
+</html>
